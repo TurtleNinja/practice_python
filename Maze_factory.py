@@ -104,7 +104,7 @@ class EnchantedMazeFactory(MazeFactory):
     @classmethod
     def MakeDoor(cls, r1, r2):
         return DoorNeedingASpell(r1, r2)
-        
+
 #*************************************************
 class BombRoom(Room):
     def __init__(self, room_number):
@@ -186,6 +186,7 @@ class MazeGame():
 #====================================================#
 def find_maze_rooms(aMaze):
     maze_rooms = []
+    #check 5 rooms
     for room_number in range(5):
         try:
             room = aMaze.RoomNo(room_number)
@@ -195,11 +196,13 @@ def find_maze_rooms(aMaze):
             maze_rooms.append(room)
             print("Entered the room!")
 
+            #check each side of the room
             for idx in range(4):
                 side = room.GetSide(idx)
                 side_str = str(side.__class__).replace("<class '__main__.", "").replace("'>", "")
                 print("\tRoom: {}, {:<15s}, Type: {}".format(room_number, Direction(idx), side_str))
                 side.Enter()
+                #go through if the side is a door
                 if side_str == "Door" or side_str == "DoorNeedingASpell" or side_str == "BombProofDoor":
                     next_room = side.GetToOtherSideFrom(room)
                     print("\t\tMoving from room {} to room {}".format(room._roomNumber, next_room._roomNumber))
@@ -212,14 +215,15 @@ def find_maze_rooms(aMaze):
 print("***************************")
 print("******   MAZE GAME   ******")
 print("***************************")
+#find rooms in regular maze
 factory = MazeFactory()
 maze = MazeGame().CreateMaze(factory)
 find_maze_rooms(maze)
-
+#find rooms in enchanted maze
 factory2 = EnchantedMazeFactory()
 enchanted_maze = MazeGame().CreateMaze(factory2)
 find_maze_rooms(enchanted_maze)
-
+#find rooms in bomb maze
 factory3 = BombedMazeFactory()
 bombed_maze = MazeGame().CreateMaze(factory3)
 find_maze_rooms(bombed_maze)
